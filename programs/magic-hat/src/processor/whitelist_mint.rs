@@ -132,13 +132,13 @@ pub fn handle_whitelist_mint_nft<'info>(
         && !cmp_pubkeys(&current_ix.program_id, &GUMDROP_ID)
         && !cmp_pubkeys(&current_ix.program_id, &CUPCAKE_ID)
     {
-        punish_bots(
-            MagicHatError::SuspiciousTransaction,
-            whitelisted_address.to_account_info(),
-            ctx.accounts.magic_hat.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-            BOT_FEE,
-        )?;
+        // punish_bots(
+        //     MagicHatError::SuspiciousTransaction,
+        //     whitelisted_address.to_account_info(),
+        //     ctx.accounts.magic_hat.to_account_info(),
+        //     ctx.accounts.system_program.to_account_info(),
+        //     BOT_FEE,
+        // )?;
         return Ok(());
     }
     let next_ix = get_instruction_relative(1, &instruction_sysvar_account_info);
@@ -157,13 +157,13 @@ pub fn handle_whitelist_mint_nft<'info>(
         }
         Err(_) => {
             if is_feature_active(&magic_hat.data.uuid, COLLECTIONS_FEATURE_INDEX) {
-                punish_bots(
-                    MagicHatError::MissingSetCollectionDuringMint,
-                    whitelisted_address.to_account_info(),
-                    ctx.accounts.magic_hat.to_account_info(),
-                    ctx.accounts.system_program.to_account_info(),
-                    BOT_FEE,
-                )?;
+                // punish_bots(
+                //     MagicHatError::MissingSetCollectionDuringMint,
+                //     whitelisted_address.to_account_info(),
+                //     ctx.accounts.magic_hat.to_account_info(),
+                //     ctx.accounts.system_program.to_account_info(),
+                //     BOT_FEE,
+                // )?;
                 return Ok(());
             }
         }
@@ -212,14 +212,14 @@ pub fn handle_whitelist_mint_nft<'info>(
                         &magic_hat.authority,
                     )
                 {
-                    punish_bots(
-                        MagicHatError::MagicHatNotLive,
-                        whitelisted_address.to_account_info(),
-                        ctx.accounts.magic_hat.to_account_info(),
-                        ctx.accounts.system_program.to_account_info(),
-                        BOT_FEE,
-                    )?;
-                    return Ok(());
+                    // punish_bots(
+                    //     MagicHatError::MagicHatNotLive,
+                    //     whitelisted_address.to_account_info(),
+                    //     ctx.accounts.magic_hat.to_account_info(),
+                    //     ctx.accounts.system_program.to_account_info(),
+                    //     BOT_FEE,
+                    // )?;
+                    return Err(error!(MagicHatError::MagicHatNotLiveForWL));
                 }
             }
             EndSettingType::Amount => {
@@ -228,13 +228,13 @@ pub fn handle_whitelist_mint_nft<'info>(
                         &ctx.accounts.whitelisted_address.key(),
                         &magic_hat.authority,
                     ) {
-                        punish_bots(
-                            MagicHatError::MagicHatEmpty,
-                            whitelisted_address.to_account_info(),
-                            ctx.accounts.magic_hat.to_account_info(),
-                            ctx.accounts.system_program.to_account_info(),
-                            BOT_FEE,
-                        )?;
+                        // punish_bots(
+                        //     MagicHatError::MagicHatEmpty,
+                        //     whitelisted_address.to_account_info(),
+                        //     ctx.accounts.magic_hat.to_account_info(),
+                        //     ctx.accounts.system_program.to_account_info(),
+                        //     BOT_FEE,
+                        // )?;
                         return Ok(());
                     }
                     return err!(MagicHatError::MagicHatEmpty);
@@ -245,13 +245,13 @@ pub fn handle_whitelist_mint_nft<'info>(
     let mut remaining_accounts_counter: usize = 0;
     if let Some(gatekeeper) = &magic_hat.data.gatekeeper {
         if ctx.remaining_accounts.len() <= remaining_accounts_counter {
-            punish_bots(
-                MagicHatError::GatewayTokenMissing,
-                whitelisted_address.to_account_info(),
-                ctx.accounts.magic_hat.to_account_info(),
-                ctx.accounts.system_program.to_account_info(),
-                BOT_FEE,
-            )?;
+            // punish_bots(
+            //     MagicHatError::GatewayTokenMissing,
+            //     whitelisted_address.to_account_info(),
+            //     ctx.accounts.magic_hat.to_account_info(),
+            //     ctx.accounts.system_program.to_account_info(),
+            //     BOT_FEE,
+            // )?;
             return Ok(());
         }
         let gateway_token_info = &ctx.remaining_accounts[remaining_accounts_counter];
@@ -470,13 +470,13 @@ pub fn handle_whitelist_mint_nft<'info>(
     // }
 
     if magic_hat.items_redeemed >= magic_hat.data.items_available {
-        punish_bots(
-            MagicHatError::MagicHatEmpty,
-            whitelisted_address.to_account_info(),
-            ctx.accounts.magic_hat.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-            BOT_FEE,
-        )?;
+        // punish_bots(
+        //     MagicHatError::MagicHatEmpty,
+        //     whitelisted_address.to_account_info(),
+        //     ctx.accounts.magic_hat.to_account_info(),
+        //     ctx.accounts.system_program.to_account_info(),
+        //     BOT_FEE,
+        // )?;
         return Ok(());
     }
 

@@ -26,6 +26,8 @@ pub enum MagicHatError {
     MagicHatEmpty,
     #[msg("Magic hat is not live!")]
     MagicHatNotLive,
+    #[msg("Magic hat is not live for WL!")]
+    MagicHatNotLiveForWL,
     #[msg("Configs that are using hidden uris do not have config lines, they have a single hash representing hashed order")]
     HiddenSettingsConfigsDoNotHaveConfigLines,
     #[msg("Cannot change number of lines unless is a hidden config")]
