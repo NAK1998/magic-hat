@@ -3,7 +3,7 @@ use mpl_token_metadata::state::{
 };
 use solana_program::pubkey::Pubkey;
 
-pub const MAGIC_HAT_CREATOR_WALLET: &str = "Bi4UpEtKxnHwCw7b9xkMCouGT6xLNm8nixs2fTmxTevs";
+pub const MAGIC_HAT_CREATOR_WALLET: &str = "4bDer2d1P357AhB8YN13b1XXBAh89d2xHex9qrM3xEtt";
 
 pub const EXPIRE_OFFSET: i64 = 10 * 60;
 pub const BLOCK_HASHES: Pubkey =
