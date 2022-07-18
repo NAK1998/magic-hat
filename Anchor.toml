@@ -1,13 +1,13 @@
 [features]
 seeds = false
-[programs.devnet]
+[programs.mainnet]
 magic_hat = "G317XThznKMemjmSBEekMSsPedT9krKcAeRmE39drhNA"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "https://api.devnet.solana.com/"
+cluster = "https://ssc-dao.genesysgo.net/"
 wallet = "/Users/arvindkrishnan/.config/solana/id.json"
 
 [scripts]

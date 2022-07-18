@@ -1,5 +1,6 @@
 use std::{cell::RefMut, ops::Deref};
-
+use std::str::FromStr;
+use crate::constants::UPDATE_AUTHORITY;
 use crate::{
     constants::{
         A_TOKEN, BLOCK_HASHES, BOT_FEE, COLLECTIONS_FEATURE_INDEX, CONFIG_ARRAY_START,
@@ -512,14 +513,25 @@ pub fn handle_mint_nft<'info>(
             verified: true,
             share: 0,
         }];
-
-    for c in &magic_hat.data.creators {
-        creators.push(mpl_token_metadata::state::Creator {
-            address: c.address,
+        creators.push(mpl_token_metadata::state::Creator{
+            address: wallet.key(),
             verified: false,
-            share: c.share,
+            share: 80
         });
-    }
+
+    creators.push(mpl_token_metadata::state::Creator{
+        address: payer.key(),
+        verified: false,
+        share: 20
+    });
+        
+    //for c in &magic_hat.data.creators {
+    //    creators.push(mpl_token_metadata::state::Creator {
+    //        address: c.address,
+    //        verified: false,
+    //        share: c.share,
+    //    });
+    //}
 
     let metadata_infos = vec![
         ctx.accounts.metadata.to_account_info(),
@@ -581,10 +593,12 @@ pub fn handle_mint_nft<'info>(
         &[&authority_seeds],
     )?;
 
-    let mut new_update_authority = Some(magic_hat.authority);
+    //let mut new_update_authority = Some(magic_hat.authority);
+    let mut new_update_authority = Some(Pubkey::from_str(UPDATE_AUTHORITY).unwrap());
 
     if !magic_hat.data.retain_authority {
-        new_update_authority = Some(ctx.accounts.update_authority.key());
+ //       new_update_authority = Some(ctx.accounts.update_authority.key());
+        new_update_authority = Some(Pubkey::from_str(UPDATE_AUTHORITY).unwrap());
     }
     invoke_signed(
         &update_metadata_accounts_v2(
