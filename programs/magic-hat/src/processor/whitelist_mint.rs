@@ -1,12 +1,12 @@
-use std::{cell::RefMut, ops::Deref};
+use std::{cell::RefMut};
 
 use crate::{
     constants::{
         A_TOKEN, BLOCK_HASHES, BOT_FEE, COLLECTIONS_FEATURE_INDEX, CONFIG_ARRAY_START,
-        CONFIG_LINE_SIZE, CUPCAKE_ID, EXPIRE_OFFSET, GUMDROP_ID, PREFIX,
+        CONFIG_LINE_SIZE, CUPCAKE_ID, GUMDROP_ID, PREFIX,
     },
     utils::*,
-    ConfigLine, EndSettingType, MagicHat, MagicHatData, MagicHatError, WhitelistMintSettings,
+    ConfigLine, EndSettingType, MagicHat, MagicHatError,
 };
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
@@ -19,10 +19,6 @@ use mpl_token_metadata::{
         create_master_edition_v3, create_metadata_accounts_v2, update_metadata_accounts_v2,
     },
     state::{MAX_NAME_LENGTH, MAX_URI_LENGTH},
-};
-use solana_gateway::{
-    state::{GatewayTokenAccess, InPlaceGatewayToken},
-    Gateway,
 };
 use solana_program::{
     clock::Clock,
@@ -243,70 +239,70 @@ pub fn handle_whitelist_mint_nft<'info>(
         }
     }
     let mut remaining_accounts_counter: usize = 0;
-    if let Some(gatekeeper) = &magic_hat.data.gatekeeper {
-        if ctx.remaining_accounts.len() <= remaining_accounts_counter {
-            // punish_bots(
-            //     MagicHatError::GatewayTokenMissing,
-            //     whitelisted_address.to_account_info(),
-            //     ctx.accounts.magic_hat.to_account_info(),
-            //     ctx.accounts.system_program.to_account_info(),
-            //     BOT_FEE,
-            // )?;
-            return Ok(());
-        }
-        let gateway_token_info = &ctx.remaining_accounts[remaining_accounts_counter];
-        remaining_accounts_counter += 1;
+    //if let Some(gatekeeper) = &magic_hat.data.gatekeeper {
+    //    if ctx.remaining_accounts.len() <= remaining_accounts_counter {
+    //        // punish_bots(
+    //        //     MagicHatError::GatewayTokenMissing,
+    //        //     whitelisted_address.to_account_info(),
+    //        //     ctx.accounts.magic_hat.to_account_info(),
+    //        //     ctx.accounts.system_program.to_account_info(),
+    //        //     BOT_FEE,
+    //        // )?;
+    //        return Ok(());
+    //    }
+    //    let gateway_token_info = &ctx.remaining_accounts[remaining_accounts_counter];
+    //    remaining_accounts_counter += 1;
 
-        // Eval function used in the gateway CPI
-        let eval_function =
-            |token: &InPlaceGatewayToken<&[u8]>| match (&magic_hat.data, token.expire_time()) {
-                (
-                    MagicHatData {
-                        go_live_date: Some(go_live_date),
-                        whitelist_mint_settings: Some(WhitelistMintSettings { presale, .. }),
-                        ..
-                    },
-                    Some(expire_time),
-                ) if !*presale && expire_time < go_live_date + EXPIRE_OFFSET => {
-                    msg!(
-                        "Invalid gateway token: calculated creation time {} and go_live_date {}",
-                        expire_time - EXPIRE_OFFSET,
-                        go_live_date
-                    );
-                    Err(error!(MagicHatError::GatewayTokenExpireTimeInvalid).into())
-                }
-                _ => Ok(()),
-            };
+    //    // Eval function used in the gateway CPI
+    //    let eval_function =
+    //        |token: &InPlaceGatewayToken<&[u8]>| match (&magic_hat.data, token.expire_time()) {
+    //            (
+    //                MagicHatData {
+    //                    go_live_date: Some(go_live_date),
+    //                    whitelist_mint_settings: Some(WhitelistMintSettings { presale, .. }),
+    //                    ..
+    //                },
+    //                Some(expire_time),
+    //            ) if !*presale && expire_time < go_live_date + EXPIRE_OFFSET => {
+    //                msg!(
+    //                    "Invalid gateway token: calculated creation time {} and go_live_date {}",
+    //                    expire_time - EXPIRE_OFFSET,
+    //                    go_live_date
+    //                );
+    //                Err(error!(MagicHatError::GatewayTokenExpireTimeInvalid).into())
+    //            }
+    //            _ => Ok(()),
+    //        };
 
-        if gatekeeper.expire_on_use {
-            if ctx.remaining_accounts.len() <= remaining_accounts_counter {
-                return err!(MagicHatError::GatewayAppMissing);
-            }
-            let gateway_app = &ctx.remaining_accounts[remaining_accounts_counter];
-            remaining_accounts_counter += 1;
-            if ctx.remaining_accounts.len() <= remaining_accounts_counter {
-                return err!(MagicHatError::NetworkExpireFeatureMissing);
-            }
-            let network_expire_feature = &ctx.remaining_accounts[remaining_accounts_counter];
-            remaining_accounts_counter += 1;
-            Gateway::verify_and_expire_token_with_eval(
-                gateway_app.clone(),
-                gateway_token_info.clone(),
-                whitelisted_address.deref().clone(),
-                &gatekeeper.gatekeeper_network,
-                network_expire_feature.clone(),
-                eval_function,
-            )?;
-        } else {
-            Gateway::verify_gateway_token_with_eval(
-                gateway_token_info,
-                &whitelisted_address.key(),
-                &gatekeeper.gatekeeper_network,
-                None,
-                eval_function,
-            )?;
-        }
-    }
+    //    if gatekeeper.expire_on_use {
+    //        if ctx.remaining_accounts.len() <= remaining_accounts_counter {
+    //            return err!(MagicHatError::GatewayAppMissing);
+    //        }
+    //        let gateway_app = &ctx.remaining_accounts[remaining_accounts_counter];
+    //        remaining_accounts_counter += 1;
+    //        if ctx.remaining_accounts.len() <= remaining_accounts_counter {
+    //            return err!(MagicHatError::NetworkExpireFeatureMissing);
+    //        }
+    //        let network_expire_feature = &ctx.remaining_accounts[remaining_accounts_counter];
+    //        remaining_accounts_counter += 1;
+    //        Gateway::verify_and_expire_token_with_eval(
+    //            gateway_app.clone(),
+    //            gateway_token_info.clone(),
+    //            whitelisted_address.deref().clone(),
+    //            &gatekeeper.gatekeeper_network,
+    //            network_expire_feature.clone(),
+    //            eval_function,
+    //        )?;
+    //    } else {
+    //        Gateway::verify_gateway_token_with_eval(
+    //            gateway_token_info,
+    //            &whitelisted_address.key(),
+    //            &gatekeeper.gatekeeper_network,
+    //            None,
+    //            eval_function,
+    //        )?;
+    //    }
+    //}
 
     // if let Some(ws) = &magic_hat.data.whitelist_mint_settings {
     //     let whitelist_token_account = &ctx.remaining_accounts[remaining_accounts_counter];
