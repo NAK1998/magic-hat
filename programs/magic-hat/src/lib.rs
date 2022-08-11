@@ -156,4 +156,16 @@ pub mod magic_hat {
             wl_start_time_1_wl_st,
         )
     }
+
+    pub fn set_lockup_settings(
+        ctx: Context<SetLockupSettings>,
+        lockup_type: u8,
+        number: i64,
+    ) -> Result<()> {
+        handle_set_lockup_settings(ctx, lockup_type, number)
+    }
+
+    pub fn close_lockup_settings(ctx: Context<CloseLockupSettings>) -> Result<()> {
+        handle_close_lockup_settings(ctx)
+    }
 }
