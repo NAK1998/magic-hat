@@ -28,11 +28,11 @@ solana-gateway = "0.2.0"
 proc_macros = {path='../../lib/proc_macros'}
 common = {path='../../lib/common'}
 static_assertions = "1.1.0"
-
+cardinal-token-manager = { version = "^1.4.6", features = ["cpi"] }
+cardinal-time-invalidator = { version = "^1.4.6", features = ["cpi"] }
 
 [dev-dependencies]
 solana-program-test = "1.9.18"
 solana-sdk = "~1.9.18"
 anchor-client = "0.24.2"
 borsh = "~0.9.2"
-
